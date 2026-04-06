@@ -1,0 +1,937 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saffron Tide | Restaurant UI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sand: #f4e8d1;
+      --cream: #f8f2e7;
+      --clay: #c66443;
+      --clay-deep: #9c4125;
+      --olive: #556448;
+      --olive-soft: #8e9a79;
+      --charcoal: #1b1a17;
+      --charcoal-soft: #2e2a26;
+      --gold: #e6b35a;
+      --line: rgba(27, 26, 23, 0.12);
+      --shadow: 0 22px 60px rgba(25, 18, 11, 0.18);
+      --card-shadow: 0 18px 40px rgba(33, 24, 15, 0.12);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--charcoal);
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(198, 100, 67, 0.25), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(230, 179, 90, 0.24), transparent 18%),
+        linear-gradient(180deg, #f2e7d5 0%, #fbf7ef 46%, #efe2c9 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(12px);
+      opacity: 0.5;
+    }
+
+    body::before {
+      background: rgba(85, 100, 72, 0.16);
+      top: -80px;
+      right: -70px;
+    }
+
+    body::after {
+      background: rgba(198, 100, 67, 0.1);
+      bottom: -110px;
+      left: -90px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 22px auto;
+      padding: 18px;
+      border: 1px solid rgba(27, 26, 23, 0.08);
+      border-radius: 38px;
+      background: rgba(248, 242, 231, 0.76);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 10px 8px 20px;
+      animation: rise 0.8s ease both;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(145deg, rgba(198, 100, 67, 0.98), rgba(156, 65, 37, 0.95));
+      color: var(--cream);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      box-shadow: 0 12px 28px rgba(156, 65, 37, 0.35);
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy span {
+      color: rgba(27, 26, 23, 0.7);
+      font-size: 0.9rem;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 0.95rem;
+      color: rgba(27, 26, 23, 0.82);
+    }
+
+    .nav a {
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      background: var(--clay);
+      transition: transform 0.25s ease;
+    }
+
+    .nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: var(--radius-pill);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--clay), var(--clay-deep));
+      color: var(--cream);
+      box-shadow: 0 14px 30px rgba(156, 65, 37, 0.28);
+    }
+
+    .button.secondary {
+      color: var(--charcoal);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(27, 26, 23, 0.08);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 24px;
+      padding: 14px 8px 24px;
+    }
+
+    .hero-copy,
+    .hero-visual {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-copy {
+      padding: 58px clamp(24px, 4vw, 56px);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.25)),
+        linear-gradient(145deg, rgba(244, 232, 209, 0.98), rgba(239, 226, 201, 0.88));
+      border: 1px solid rgba(27, 26, 23, 0.08);
+      animation: rise 0.95s ease 0.08s both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 15px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--olive);
+      background: rgba(85, 100, 72, 0.1);
+      border: 1px solid rgba(85, 100, 72, 0.15);
+    }
+
+    .hero h1,
+    h2 {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 {
+      margin-top: 22px;
+      font-size: clamp(3.9rem, 7vw, 6.8rem);
+      max-width: 9ch;
+    }
+
+    .hero p {
+      max-width: 34rem;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 24px 0 30px;
+      color: rgba(27, 26, 23, 0.76);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(27, 26, 23, 0.08);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      color: rgba(27, 26, 23, 0.68);
+      font-size: 0.92rem;
+    }
+
+    .hero-visual {
+      padding: 24px;
+      min-height: 670px;
+      background:
+        radial-gradient(circle at 25% 15%, rgba(230, 179, 90, 0.55), transparent 20%),
+        linear-gradient(145deg, #243224, #354730 60%, #4a5e43);
+      animation: rise 1.05s ease 0.16s both;
+    }
+
+    .pattern {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 82%);
+      opacity: 0.35;
+    }
+
+    .feature-card {
+      position: absolute;
+      border-radius: 26px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    .feature-card.large {
+      top: 38px;
+      left: 34px;
+      right: 34px;
+      min-height: 370px;
+      padding: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 251, 243, 0.94), rgba(244, 232, 209, 0.92));
+    }
+
+    .dish-plate {
+      position: relative;
+      height: 250px;
+      margin: 10px 0 26px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 50% 48%, #f7f0df 0 24%, #dfd0b0 24.5% 27%, transparent 27.5%),
+        radial-gradient(circle at 52% 48%, #e0bb63 0 12%, transparent 12.5%),
+        radial-gradient(circle at 45% 44%, rgba(201, 80, 47, 0.92) 0 7%, transparent 7.5%),
+        radial-gradient(circle at 59% 55%, rgba(85, 100, 72, 0.95) 0 6%, transparent 6.5%),
+        radial-gradient(circle at 39% 58%, rgba(230, 179, 90, 0.9) 0 5%, transparent 5.5%),
+        radial-gradient(circle at 47% 52%, rgba(156, 65, 37, 0.92) 0 4%, transparent 4.5%),
+        linear-gradient(180deg, #f1dcc4, #edd4b3);
+      border: 1px solid rgba(27, 26, 23, 0.06);
+      overflow: hidden;
+    }
+
+    .dish-plate::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 24px;
+      border: 1px dashed rgba(27, 26, 23, 0.1);
+    }
+
+    .dish-meta {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .dish-meta h3 {
+      margin: 0 0 8px;
+      font-size: 1.9rem;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .dish-meta p {
+      margin: 0;
+      color: rgba(27, 26, 23, 0.68);
+      line-height: 1.7;
+      max-width: 24ch;
+    }
+
+    .price-tag {
+      min-width: 86px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-weight: 700;
+      text-align: center;
+      background: rgba(198, 100, 67, 0.12);
+      color: var(--clay-deep);
+    }
+
+    .feature-card.small {
+      right: 32px;
+      bottom: 34px;
+      width: min(250px, calc(100% - 64px));
+      padding: 22px;
+      background: rgba(255, 250, 240, 0.92);
+    }
+
+    .feature-card.small .mini-label {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(85, 100, 72, 0.1);
+      color: var(--olive);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .feature-card.small h3 {
+      margin: 18px 0 10px;
+      font-size: 1.8rem;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .feature-card.small p {
+      margin: 0 0 16px;
+      color: rgba(27, 26, 23, 0.72);
+      line-height: 1.7;
+    }
+
+    .mini-avatars {
+      display: flex;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .mini-avatars span {
+      width: 38px;
+      height: 38px;
+      margin-right: -10px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 250, 240, 0.95);
+      background: linear-gradient(135deg, #d7905c, #855337);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      margin-top: 10px;
+    }
+
+    .panel {
+      border-radius: 30px;
+      padding: clamp(24px, 3vw, 34px);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(27, 26, 23, 0.08);
+      box-shadow: var(--card-shadow);
+    }
+
+    .panel h2 {
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      margin-bottom: 10px;
+    }
+
+    .panel-intro {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-intro p {
+      margin: 0;
+      line-height: 1.8;
+      color: rgba(27, 26, 23, 0.72);
+      max-width: 34rem;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .menu-card {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      border-radius: 24px;
+      min-height: 220px;
+      color: #fff7f0;
+      background:
+        linear-gradient(180deg, rgba(17, 19, 16, 0.06), rgba(17, 19, 16, 0.16)),
+        linear-gradient(150deg, #41513d, #283229 68%);
+    }
+
+    .menu-card.clay {
+      background:
+        linear-gradient(180deg, rgba(17, 19, 16, 0.04), rgba(17, 19, 16, 0.2)),
+        linear-gradient(145deg, #df8d63, #9e4629 70%);
+    }
+
+    .menu-card.gold {
+      color: var(--charcoal);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04)),
+        linear-gradient(145deg, #f2cf87, #dfac4f 70%);
+    }
+
+    .menu-card::before {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -45px;
+      bottom: -65px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      filter: blur(2px);
+    }
+
+    .menu-card .category {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 18px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .gold .category {
+      border-color: rgba(27, 26, 23, 0.15);
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .menu-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.8rem;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .menu-card p {
+      margin: 0;
+      line-height: 1.8;
+      max-width: 28ch;
+      color: inherit;
+      opacity: 0.9;
+    }
+
+    .menu-card .menu-price {
+      position: absolute;
+      bottom: 20px;
+      left: 22px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .story-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .story-block {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(244, 232, 209, 0.7);
+      border: 1px solid rgba(27, 26, 23, 0.06);
+    }
+
+    .story-block strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--olive);
+    }
+
+    .story-block h3 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .story-block p {
+      margin: 0;
+      line-height: 1.8;
+      color: rgba(27, 26, 23, 0.73);
+    }
+
+    .reservation {
+      margin-top: 24px;
+      padding: clamp(24px, 4vw, 38px);
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at top right, rgba(230, 179, 90, 0.25), transparent 18%),
+        linear-gradient(145deg, #1e251d, #2a3528 65%, #43553d);
+      color: #faf4e7;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      overflow: hidden;
+    }
+
+    .reservation h2 {
+      font-size: clamp(2.7rem, 4vw, 4.3rem);
+      margin-bottom: 14px;
+    }
+
+    .reservation p {
+      margin: 0 0 24px;
+      line-height: 1.8;
+      color: rgba(250, 244, 231, 0.78);
+      max-width: 33rem;
+    }
+
+    .reservation-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .reservation-meta span {
+      padding: 10px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .booking-card {
+      align-self: end;
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(248, 242, 231, 0.98);
+      color: var(--charcoal);
+      box-shadow: var(--card-shadow);
+    }
+
+    .booking-card h3 {
+      margin: 0 0 16px;
+      font-size: 1.8rem;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(27, 26, 23, 0.1);
+      background: rgba(255, 255, 255, 0.88);
+      color: rgba(27, 26, 23, 0.88);
+      font: inherit;
+      width: 100%;
+    }
+
+    .footer {
+      padding: 26px 10px 6px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: rgba(27, 26, 23, 0.7);
+      font-size: 0.92rem;
+    }
+
+    .fade-up {
+      animation: rise 0.9s ease both;
+    }
+
+    .fade-up.delay-1 {
+      animation-delay: 0.12s;
+    }
+
+    .fade-up.delay-2 {
+      animation-delay: 0.22s;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .hero,
+      .section-grid,
+      .reservation {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 560px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+        margin: 10px auto;
+        padding: 12px;
+        border-radius: 26px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav {
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .hero-copy {
+        padding: 30px 22px;
+      }
+
+      .hero h1 {
+        font-size: clamp(3rem, 14vw, 4.4rem);
+      }
+
+      .hero-stats,
+      .menu-grid,
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 520px;
+        padding: 16px;
+      }
+
+      .feature-card.large {
+        top: 18px;
+        left: 18px;
+        right: 18px;
+        min-height: 320px;
+        padding: 18px;
+      }
+
+      .feature-card.small {
+        right: 18px;
+        left: 18px;
+        width: auto;
+        bottom: 18px;
+      }
+
+      .panel-intro {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div class="brand-copy">
+          <strong>Saffron Tide</strong>
+          <span>Coastal fire kitchen</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#menu">Menu</a>
+        <a href="#story">Story</a>
+        <a href="#reserve">Reserve</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="button primary" href="#reserve">Book a Table</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">Seasonal tasting experience</div>
+          <h1>Where sea salt meets slow flame.</h1>
+          <p>
+            A warm, modern restaurant concept layered with spice-market tones, bold plating,
+            and a menu built around charcoal grills, handmade pastas, and late-night desserts.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#menu">Explore the Menu</a>
+            <a class="button secondary" href="#story">See Our Story</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <strong>4.9</strong>
+              <span>Guest rating this season</span>
+            </div>
+            <div class="stat">
+              <strong>12</strong>
+              <span>Signature plates curated nightly</span>
+            </div>
+            <div class="stat">
+              <strong>7PM</strong>
+              <span>Live jazz on Fridays and Sundays</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="pattern"></div>
+          <div class="feature-card large">
+            <div class="eyebrow">Chef's spotlight</div>
+            <div class="dish-plate"></div>
+            <div class="dish-meta">
+              <div>
+                <h3>Ember Citrus Lobster</h3>
+                <p>Charred butter glaze, preserved lemon, herbs, and saffron broth.</p>
+              </div>
+              <div class="price-tag">$32</div>
+            </div>
+          </div>
+
+          <div class="feature-card small">
+            <span class="mini-label">Tonight only</span>
+            <h3>Chef's counter seats</h3>
+            <p>Eight intimate spots with a front-row view of plating, smoke, and fire.</p>
+            <a class="button primary" href="#reserve">Claim a seat</a>
+            <div class="mini-avatars" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-grid" id="menu">
+        <div class="panel fade-up">
+          <div class="panel-intro">
+            <div>
+              <div class="eyebrow">Popular picks</div>
+              <h2>Designed to be remembered.</h2>
+            </div>
+            <p>
+              Crafted with a rich, upscale visual mood for a restaurant homepage, menu teaser,
+              and booking-focused landing screen.
+            </p>
+          </div>
+
+          <div class="menu-grid">
+            <article class="menu-card">
+              <span class="category">Starter</span>
+              <h3>Woodfired Burrata</h3>
+              <p>Roasted tomatoes, basil oil, sourdough shards, and cracked pepper honey.</p>
+              <span class="menu-price">$16</span>
+            </article>
+
+            <article class="menu-card clay">
+              <span class="category">Main Course</span>
+              <h3>Smoked Pepper Gnocchi</h3>
+              <p>Silky ricotta dumplings finished in a clay-pot tomato cream and herbs.</p>
+              <span class="menu-price">$24</span>
+            </article>
+
+            <article class="menu-card gold">
+              <span class="category">Dessert</span>
+              <h3>Burnt Vanilla Tart</h3>
+              <p>Caramelized top, sea salt crumble, and blood orange glaze.</p>
+              <span class="menu-price">$13</span>
+            </article>
+
+            <article class="menu-card">
+              <span class="category">Signature Drink</span>
+              <h3>Saffron Midnight</h3>
+              <p>Cold brew espresso, citrus peel, smoked syrup, and velvet foam.</p>
+              <span class="menu-price">$11</span>
+            </article>
+          </div>
+        </div>
+
+        <aside class="story-panel fade-up delay-1" id="story">
+          <div class="panel">
+            <div class="eyebrow">Inside the house</div>
+            <h2>Space with a pulse.</h2>
+            <p style="margin: 14px 0 0; line-height: 1.8; color: rgba(27, 26, 23, 0.72);">
+              This layout balances editorial elegance with conversion-focused sections, making it
+              useful as a restaurant landing page, hero mockup, or client-facing concept UI.
+            </p>
+          </div>
+
+          <div class="story-block">
+            <strong>Atmosphere</strong>
+            <h3>Warm lighting, grounded palette.</h3>
+            <p>Terracotta, olive, and cream create a cozy identity without falling back to generic dark restaurant styling.</p>
+          </div>
+
+          <div class="story-block">
+            <strong>Flexible use</strong>
+            <h3>Easy to customize.</h3>
+            <p>Swap brand names, dish titles, or call-to-actions and this single file can become a polished demo in minutes.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="reservation fade-up delay-2" id="reserve">
+        <div>
+          <div class="eyebrow" style="background: rgba(255, 255, 255, 0.08); color: #f9ead1; border-color: rgba(255, 255, 255, 0.1);">Reservations</div>
+          <h2>Save your table before the evening rush.</h2>
+          <p>
+            Built-in reservation styling gives the page a clear next step and makes the UI feel
+            complete rather than just decorative.
+          </p>
+          <div class="reservation-meta">
+            <span>Open daily 5:30 PM - 11:00 PM</span>
+            <span>Private dining available</span>
+            <span>Live music weekends</span>
+          </div>
+        </div>
+
+        <div class="booking-card">
+          <h3>Book your evening</h3>
+          <div class="form-row">
+            <input class="field" type="text" value="2 Guests" aria-label="Guests">
+            <input class="field" type="text" value="07:30 PM" aria-label="Time">
+          </div>
+          <div class="form-row">
+            <input class="field" type="text" value="Friday, 12 April" aria-label="Date">
+            <input class="field" type="text" value="Indoor Seating" aria-label="Seating">
+          </div>
+          <button class="button primary" style="width: 100%; margin-top: 6px;">Confirm Reservation</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer" id="contact">
+      <span>118 Harbor Lane, Downtown District</span>
+      <span>hello@saffrontide.com</span>
+      <span>(555) 014-8821</span>
+    </footer>
+  </div>
+</body>
+</html>
